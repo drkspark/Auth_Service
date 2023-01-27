@@ -1,7 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
+const bcrypt = require("bcrypt");
+const { SALT } = require("../config/serverConfig");
+
 module.exports = (sequelize, DataTypes) => {
-    class USER extends Model {
+    class User extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -11,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
         }
     }
-    USER.init(
+    User.init(
         {
             email: {
                 type: DataTypes.STRING,
@@ -31,8 +34,13 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: "USER",
+            modelName: "User",
         }
     );
-    return USER;
+
+    User.beforeCreate((user) => {
+        const encryptedPassword = bcrypt.hashSync(user.password, SALT);
+        user.password = encryptedPassword;
+    });
+    return User;
 };
