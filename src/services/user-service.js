@@ -48,6 +48,28 @@ class UserService {
             throw error;
         }
     }
+
+    async signIn(email, plainPassword) {
+        try {
+            //  Step 1: Fetching User Email
+            const user = await this.userRepository.findByEmail(email);
+            // Step 2: Check the Plain Password and Hashed Password
+            const passwordMatch = this.checkPassword(plainPassword, user.password);
+            
+            if (!passwordMatch) {
+                console.log("Password doesn't match");
+                throw {error: "Incorrect Password"};
+            }
+
+            // Step 3: Create a new JWT Token and send back
+            const newJWT = this.createToken({email: user.email, id: user.id});
+            return newJWT;
+        }
+        catch (error) {
+            console.log("Something went wrong in the sign in process");
+            throw error;
+        }
+    }
 }
 
 module.exports = UserService;
