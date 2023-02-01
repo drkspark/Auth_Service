@@ -17,11 +17,11 @@ const create = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        return res.status(ServerErrorCodes.INTERNAL_SERVER_ERROR).json({
-            message: "Something went wrong",
+        return res.status(error.statusCode).json({
+            message: error.message,
             data: {},
             success: false,
-            err: error,
+            err: error.explaination,
         });
     }
 };
